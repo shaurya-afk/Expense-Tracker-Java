@@ -2,7 +2,7 @@ import java.sql.*;
 
 public class Database {
     String amount, category, date, name;
-    static int budget = 10000;
+    static float budget = 10000;
     Database(){}
     Database(String amount, String category, String date, String name)
     {
