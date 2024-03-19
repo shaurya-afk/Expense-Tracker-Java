@@ -5,7 +5,7 @@ class MainMenuNaive
     static private int call()
     {
         int ch;
-        System.out.println("1) Insert Expense\n2)Update Expense\n3)Delete Expense\n4)Display Expense\n5)Quit");
+        System.out.print("1) Insert Expense\n2)Update Expense\n3)Display Expense\n4)Delete Expense\n5)Quit\n> ");
         Scanner sc = new Scanner(System.in);
         ch = sc.nextInt();
 
@@ -18,28 +18,42 @@ class MainMenuNaive
         int ch = call();
         while (ch != 5)
         {
-            switch (ch){
-                case 1:
-                    System.out.println("Expense name: ");
-                    String name = sc.nextLine();
+            try{
+                switch (ch) {
+                    case 1:
+                        System.out.print("Expense name: ");
+                        String name = sc.nextLine();
 
-                    System.out.println("Expense Amount");
-                    String amount = sc.nextLine();
+                        System.out.print("Expense Amount: ");
+                        String amount = sc.nextLine();
 
-                    System.out.println("Expense Category: ");
-                    String cat = sc.nextLine();
+                        System.out.print("Expense Category: ");
+                        String cat = sc.nextLine();
 
-                    System.out.println("Expense Date: ");
-                    String date = sc.nextLine();
+                        System.out.print("Expense Date: ");
+                        String date = sc.nextLine();
 
-                    System.out.println("Expense Code(should be unique for each expense entered): ");
-                    int code = sc.nextInt();
+                        System.out.print("Expense Code(should be unique for each expense entered): ");
+                        String code = sc.nextLine();
 
-                    ops.InsertItem(name, cat, date, amount, code);
+                        ops.InsertItem(name, cat, date, amount, code);
 
-                    ch = call();
-                default:
-                    break;
+                        ch = call();
+                        break;
+                    case 2:
+                        ops.UpdateItem();
+                        ch = call();
+                        break;
+                    case 3:
+                        ops.Display();
+                        ch = call();
+                        break;
+                    default:
+                        break;
+                }
+            }catch (Exception e)
+            {
+                System.out.println("invalid entry" + e.getMessage());
             }
         }
     }
