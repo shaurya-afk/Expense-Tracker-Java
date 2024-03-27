@@ -1,45 +1,148 @@
+import javax.xml.crypto.Data;
 import java.util.Scanner;
+
+class Banner
+{
+    Banner()
+    {
+        String banner = "Expense Tracker made by Shaurya Sharma";
+        int bannerLength = banner.length();
+
+        System.out.print("+");
+        for (int i = 0; i < bannerLength + 2; i++) {
+            System.out.print("-");
+        }
+        System.out.println("+");
+
+        System.out.println("| " + banner + " |");
+
+        System.out.print("+");
+        for (int i = 0; i < bannerLength + 2; i++) {
+            System.out.print("-");
+        }
+        System.out.println("+");
+    }
+}
 
 class MainMenuNaive
 {
     static private int call()
     {
-        int ch;
-        System.out.println("1) Insert Expense\n2)Update Expense\n3)Delete Expense\n4)Display Expense\n5)Quit");
+        System.out.println("+" + "-".repeat(36) + "+");
+        System.out.println("|        Select an option            |");
+        System.out.println("+" + "-".repeat(36) + "+");
+        System.out.println("| 1) Insert Expense                  |");
+        System.out.println("| 2) Update Expense                  |");
+        System.out.println("| 3) Display Expense                 |");
+        System.out.println("| 4) Delete Expense                  |");
+        System.out.println("| 5) Display from Database           |");
+        System.out.println("| 6) Update from Database            |");
+        System.out.println("| 7) Delete from Database            |");
+        System.out.println("| 8) Default Demo                    |");
+        System.out.println("| 9) Exit                            |");
+        System.out.println("+" + "-".repeat(36) + "+");
+        System.out.print("> ");
         Scanner sc = new Scanner(System.in);
-        ch = sc.nextInt();
+        int ch = sc.nextInt();
 
         return ch;
     }
     static void mainMenuDriver()
     {
         Operations ops = new Operations();
+        DatabaseConnection dBCon = new DatabaseConnection();
         Scanner sc = new Scanner(System.in);
-        int ch = call();
-        while (ch != 5)
+
+        int budget;
+        System.out.print("Enter your budget: ");
+        budget = sc.nextInt();
+
+        if(budget > 0)
         {
-            switch (ch){
-                case 1:
-                    System.out.println("Expense name: ");
-                    String name = sc.nextLine();
+            DatabaseConnection.budget = budget;
+        }else{
+            System.out.println("invalid entry!");
+        }
 
-                    System.out.println("Expense Amount");
-                    String amount = sc.nextLine();
+        Banner banner = new Banner();
 
-                    System.out.println("Expense Category: ");
-                    String cat = sc.nextLine();
+        int ch = call();
+        while (ch != 9)
+        {
+            if(DatabaseConnection.budget < 0)
+            {
+                System.out.println("Your budget is too low!\nCan't add more expenses! "+DatabaseConnection.budget);
+                break;
+            }
+            try{
+                switch (ch) {
+                    case 1:
+                        System.out.print("Expense Code(should be unique for each expense entered): ");
+                        Integer code = sc.nextInt();
 
-                    System.out.println("Expense Date: ");
-                    String date = sc.nextLine();
+                        if (ops.codes.contains(code)){
+                            throw new CodeException();
+                        }
 
-                    System.out.println("Expense Code(should be unique for each expense entered): ");
-                    int code = sc.nextInt();
+                        System.out.print("Expense name: ");
+                        String name = sc.next();
 
-                    ops.InsertItem(name, cat, date, amount, code);
+                        System.out.print("Expense Amount: ");
+                        String amount = sc.next();
 
-                    ch = call();
-                default:
-                    break;
+                        System.out.print("Expense Category: ");
+                        String cat = sc.next();
+
+                        System.out.print("Expense Date: ");
+                        String date = sc.next();
+
+                        ops.InsertItem(name, cat, date, amount, code);
+
+                        ch = call();
+                        break;
+                    case 2:
+                        ops.UpdateItem();
+                        ch = call();
+                        break;
+                    case 3:
+                        ops.Display();
+                        ch = call();
+                        break;
+                    case 4:
+                        ops.Delete();
+                        ch = call();
+                        break;
+                    case 5:
+                        dBCon.DisplayConnection();
+                        ch = call();
+                        break;
+                    case 6:
+                        dBCon.UpdateConnection();
+                        ch = call();
+                        break;
+                    case 7:
+                        dBCon.DeleteConnection();
+                        ch = call();
+                        break;
+                    case 8:
+                        ops.DEFAULT_DEMO();
+                        ch = call();
+                        break;
+                    case 9:
+                        System.out.println("+" + "-".repeat(45) + "+");
+                        System.out.println("|  Bye! See You Later.  |");
+                        System.out.println("+" + "-".repeat(45) + "+");
+                        ch = 9;
+                        break;
+                }
+            }catch (Exception e)
+            {
+                System.out.println("+------------------------------------+");
+                System.out.println("|          Error: Invalid Entry      |");
+                System.out.println("|                                    |");
+                System.out.println("| " + e.getMessage() + " |");
+                System.out.println("+------------------------------------+");
+                ch = call();
             }
         }
     }
