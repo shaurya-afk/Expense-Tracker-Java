@@ -1,3 +1,4 @@
+import javax.xml.crypto.Data;
 import java.util.Scanner;
 
 class Banner
@@ -30,7 +31,6 @@ class MainMenuNaive
 {
     static private int call()
     {
-        int ch;
         System.out.println("+" + "-".repeat(36) + "+");
         System.out.println("|        Select an option            |");
         System.out.println("+" + "-".repeat(36) + "+");
@@ -38,24 +38,45 @@ class MainMenuNaive
         System.out.println("| 2) Update Expense                  |");
         System.out.println("| 3) Display Expense                 |");
         System.out.println("| 4) Delete Expense                  |");
-        System.out.println("| 5) Quit                            |");
+        System.out.println("| 5) Display from Database           |");
+        System.out.println("| 6) Update from Database            |");
+        System.out.println("| 7) Delete from Database            |");
+        System.out.println("| 8) Default Demo                    |");
+        System.out.println("| 9) Exit                            |");
         System.out.println("+" + "-".repeat(36) + "+");
         System.out.print("> ");
         Scanner sc = new Scanner(System.in);
-        ch = sc.nextInt();
+        int ch = sc.nextInt();
 
         return ch;
     }
     static void mainMenuDriver()
     {
         Operations ops = new Operations();
+        DatabaseConnection dBCon = new DatabaseConnection();
         Scanner sc = new Scanner(System.in);
+
+        int budget;
+        System.out.print("Enter your budget: ");
+        budget = sc.nextInt();
+
+        if(budget > 0)
+        {
+            DatabaseConnection.budget = budget;
+        }else{
+            System.out.println("invalid entry!");
+        }
 
         Banner banner = new Banner();
 
         int ch = call();
         while (ch != 9)
         {
+            if(DatabaseConnection.budget < 0)
+            {
+                System.out.println("Your budget is too low!\nCan't add more expenses! "+DatabaseConnection.budget);
+                break;
+            }
             try{
                 switch (ch) {
                     case 1:
@@ -94,11 +115,23 @@ class MainMenuNaive
                         ops.Delete();
                         ch = call();
                         break;
+                    case 5:
+                        dBCon.DisplayConnection();
+                        ch = call();
+                        break;
+                    case 6:
+                        dBCon.UpdateConnection();
+                        ch = call();
+                        break;
                     case 7:
+                        dBCon.DeleteConnection();
+                        ch = call();
+                        break;
+                    case 8:
                         ops.DEFAULT_DEMO();
                         ch = call();
                         break;
-                    case 5:
+                    case 9:
                         System.out.println("+" + "-".repeat(45) + "+");
                         System.out.println("|  Bye! See You Later.  |");
                         System.out.println("+" + "-".repeat(45) + "+");

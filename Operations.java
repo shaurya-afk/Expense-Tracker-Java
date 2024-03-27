@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -69,8 +70,9 @@ public class Operations {
         codes.add(code);
     }
 
-    void InsertItem(String name, String category, String date, String amount, Integer code)
-    {
+    DatabaseConnection dBCon = new DatabaseConnection();
+
+    void InsertItem(String name, String category, String date, String amount, Integer code) throws SQLException {
         try{
             codes.add(code);
             names.put(code,name);
@@ -84,18 +86,18 @@ public class Operations {
             System.out.println("| Amount: " + amounts.get(code) + " ".repeat(20 - amounts.get(code).length()) + "|");
             System.out.println("| Dates: " + dates.get(code) + " ".repeat(21 - dates.get(code).length()) + "|");
             System.out.println("+" + "-".repeat(30) + "+");
-
         }catch (Exception e)
         {
             System.out.println(e.getMessage()+"Invalid Entries");
         }
-        Database.budget -= Float.parseFloat(amount);
+        DatabaseConnection.budget -= Float.parseFloat(amount);
         System.out.println("+" + "-".repeat(32) + "+");
         System.out.println("|         Expense Added!          |");
         System.out.println("+" + "-".repeat(32) + "+");
-        System.out.println("| Your current budget is " + Database.budget + " |");
+        System.out.println("| Your current budget is " + DatabaseConnection.budget + " |");
         System.out.println("+" + "-".repeat(32) + "+");
 
+        dBCon.InsertConnection(code,name,amount,date,category);
     }
 
     void UpdateItem()
@@ -156,8 +158,7 @@ public class Operations {
             }
         }
     }
-    void Display()
-    {
+    void Display() throws SQLException {
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter code: ");
 
@@ -173,7 +174,6 @@ public class Operations {
             System.out.println("| Dates: " + dates.get(code) + " ".repeat(21 - dates.get(code).length()) + "|");
             System.out.println("+" + "-".repeat(30) + "+");
         }
-
     }
     void Delete()
     {
