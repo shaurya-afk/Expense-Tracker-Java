@@ -8,17 +8,14 @@ class Banner
         String banner = "Expense Tracker made by Shaurya Sharma";
         int bannerLength = banner.length();
 
-        // Print top border
         System.out.print("+");
         for (int i = 0; i < bannerLength + 2; i++) {
             System.out.print("-");
         }
         System.out.println("+");
 
-        // Print banner content
         System.out.println("| " + banner + " |");
 
-        // Print bottom border
         System.out.print("+");
         for (int i = 0; i < bannerLength + 2; i++) {
             System.out.print("-");
