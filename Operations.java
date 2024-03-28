@@ -13,37 +13,43 @@ class CodeException extends Exception
 }
 
 public class Operations {
-    HashMap<Integer, String> names = new HashMap<Integer, String>();
-    HashMap<Integer, String> categories = new HashMap<Integer, String>();
-    HashMap<Integer, String> dates = new HashMap<Integer, String>();
-    HashMap<Integer, String> amounts = new HashMap<Integer, String>();
+    HashMap<Integer, String> names = new HashMap<>();
+    HashMap<Integer, String> categories = new HashMap<>();
+    HashMap<Integer, String> dates = new HashMap<>();
+    HashMap<Integer, String> amounts = new HashMap<>();
     ArrayList<Integer> codes = new ArrayList<>();
 
     public void DEFAULT_DEMO()
     {
+        DatabaseConnection dbCon = new DatabaseConnection();
+
         codes.add(999);
         names.put(999,"books");
         categories.put(999,"self");
         dates.put(999,"12-02-23");
         amounts.put(999,"120");
 
+        dbCon.InsertConnection(999,"books","120","12-02-23","self");
         codes.add(998);
         names.put(998,"party");
         categories.put(998,"enjoy");
         dates.put(998,"22-04-23");
         amounts.put(998,"2500");
+        dbCon.InsertConnection(998,"party","2500","22-04-23","party");
 
         codes.add(997);
         names.put(997,"books");
         categories.put(997,"self");
         dates.put(997,"12-02-23");
         amounts.put(997,"120");
+        dbCon.InsertConnection(997,"books","120","12-02-23","self");
 
         codes.add(996);
         names.put(996,"party");
         categories.put(996,"enjoy");
         dates.put(996,"22-04-23");
         amounts.put(996,"2500");
+        dbCon.InsertConnection(996,"books","120","12-02-23","self");
 
         System.out.println("+" + "-".repeat(45) + "+");
         System.out.println("|  Default values have been set!  |");
@@ -72,7 +78,7 @@ public class Operations {
 
     DatabaseConnection dBCon = new DatabaseConnection();
 
-    void InsertItem(String name, String category, String date, String amount, Integer code) throws SQLException {
+    void InsertItem(String name, String category, String date, String amount, Integer code) {
         try{
             codes.add(code);
             names.put(code,name);
@@ -99,7 +105,6 @@ public class Operations {
 
         dBCon.InsertConnection(code,name,amount,date,category);
     }
-
     void UpdateItem()
     {
         Scanner sc = new Scanner(System.in);

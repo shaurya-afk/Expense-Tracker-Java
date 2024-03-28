@@ -2,18 +2,132 @@ import java.sql.*;
 import java.util.Scanner;
 
 public class DatabaseConnection {
-    String amount, category, date, name;
     Scanner scanner = new Scanner(System.in);
-    static float budget = 10000;
+    protected static float budget = 0.0f;
     DatabaseConnection(){}
-    DatabaseConnection(String amount, String category, String date, String name)
-    {
-        this.amount = amount;
-        this.category = category;
-        this.date = date;
-        this.name = name;
-    }
     private static final String url = "jdbc:mysql://localhost:3306/TrackerDataBase", username = "root", password = "niam_admin";
+
+    protected static void setUsernamePassword(String username1,String password1)
+    {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try{
+            Connection connection = DriverManager.getConnection(url,username,password);
+            String query = "insert into Credentials(username,password) values (?,?)";
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            statement.setString(1,username1);
+            statement.setString(2,Authenticator.HashPassword(password1));
+            int rowsAffected = statement.executeUpdate();
+            if(rowsAffected > 0) System.out.println("Username and Password Added!");
+            else System.out.println("Username and Password not Added!!");
+
+        }catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+    protected static boolean isFirstEntry()
+    {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try{
+            Connection connection = DriverManager.getConnection(url,username,password);
+            String query = "select count(*) as total from Credentials";
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            if(resultSet.next())
+            {
+                int row_count = resultSet.getInt("total");
+                return row_count > 0;
+            }
+        }catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+
+        return false;
+    }
+    protected static String getUsername()
+    {
+        String user = "";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try{
+            Connection connection = DriverManager.getConnection(url,username,password);
+            String query = "SELECT username FROM Credentials";
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next())
+            {
+               user = resultSet.getString("username");
+            }
+        }catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+        return user;
+    }
+    protected static String getPassword(String username_)
+    {
+        String pass = "";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try{
+            Connection connection = DriverManager.getConnection(url,username,password);
+            String query = "SELECT password FROM Credentials where username = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1,username_);
+            ResultSet resultSet = statement.executeQuery();
+
+            if(resultSet.next())
+            {
+               pass = resultSet.getString("password");
+            }
+        }catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+        return pass;
+    }
+
+    protected static float getBudget()
+    {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try{
+            Connection connection = DriverManager.getConnection(url,username,password);
+            String query = "SELECT * FROM Info ORDER BY budget DESC LIMIT 1;";
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next())
+            {
+                budget = resultSet.getInt("budget");
+            }
+        }catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+        return budget;
+    }
     public void InsertConnection(int code, String name, String amount, String date, String category) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -22,13 +136,14 @@ public class DatabaseConnection {
         }
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
-            String query = "insert into Info(code, name, amount, date, category) values (?,?,?,?,?)";
+            String query = "insert into Info(code, name, amount, date, category,budget) values (?,?,?,?,?,?)";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1,code);
             statement.setString(2,name);
             statement.setString(3,amount);
             statement.setString(4,date);
             statement.setString(5,category);
+            statement.setFloat(6,budget);
 
             int rowsAffected = statement.executeUpdate();
             if(rowsAffected > 0) System.out.println("Data Inserted!");
@@ -61,6 +176,31 @@ public class DatabaseConnection {
                 System.out.println("Date: "+resultSet.getString("date"));
             }else{
                 System.out.println("data not found!");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public void DisplayAllConnection() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String query = "select * from Info";
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next())
+            {
+                System.out.println("Name: "+resultSet.getString("name"));
+                System.out.println("Amount: "+resultSet.getString("amount"));
+                System.out.println("Category: "+resultSet.getString("category"));
+                System.out.println("Date: "+resultSet.getString("date"));
+                System.out.println("Code: "+resultSet.getInt("code"));
+                System.out.println("||-------------------------------------------------------------||");
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());

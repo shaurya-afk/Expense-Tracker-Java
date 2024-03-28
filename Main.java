@@ -1,11 +1,10 @@
-import javax.xml.crypto.Data;
 import java.util.Scanner;
 
 class Banner
 {
     Banner()
     {
-        String banner = "Expense Tracker made by Shaurya Sharma";
+        String banner = "Expense Tracker";
         int bannerLength = banner.length();
 
         System.out.print("+");
@@ -39,13 +38,13 @@ class MainMenuNaive
         System.out.println("| 6) Update from Database            |");
         System.out.println("| 7) Delete from Database            |");
         System.out.println("| 8) Default Demo                    |");
-        System.out.println("| 9) Exit                            |");
+        System.out.println("| 9) Display All Database Expenses   |");
+        System.out.println("| 10) Exit                           |");
         System.out.println("+" + "-".repeat(36) + "+");
         System.out.print("> ");
         Scanner sc = new Scanner(System.in);
-        int ch = sc.nextInt();
 
-        return ch;
+        return sc.nextInt();
     }
     static void mainMenuDriver()
     {
@@ -53,21 +52,16 @@ class MainMenuNaive
         DatabaseConnection dBCon = new DatabaseConnection();
         Scanner sc = new Scanner(System.in);
 
-        int budget;
-        System.out.print("Enter your budget: ");
-        budget = sc.nextInt();
-
-        if(budget > 0)
+        if(DatabaseConnection.getBudget() <= 0)
         {
-            DatabaseConnection.budget = budget;
-        }else{
-            System.out.println("invalid entry!");
+            System.out.print("Enter your budget: ");
+            sc.nextInt();
         }
 
-        Banner banner = new Banner();
+        new Banner();
 
         int ch = call();
-        while (ch != 9)
+        while (ch <= 10)
         {
             if(DatabaseConnection.budget < 0)
             {
@@ -129,10 +123,14 @@ class MainMenuNaive
                         ch = call();
                         break;
                     case 9:
+                        dBCon.DisplayAllConnection();
+                        ch = call();
+                        break;
+                    case 10:
                         System.out.println("+" + "-".repeat(45) + "+");
-                        System.out.println("|  Bye! See You Later.  |");
+                        System.out.println("|    Bye! See You Later.     |");
                         System.out.println("+" + "-".repeat(45) + "+");
-                        ch = 9;
+                        ch = 11;
                         break;
                 }
             }catch (Exception e)
@@ -151,19 +149,31 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("username: ");
-        String uname = sc.nextLine();
-        System.out.print("password: ");
-        String pwd = sc.nextLine();
-
-        Authenticator authenticator = new Authenticator(uname, pwd);
-
-        try{
-            authenticator.CheckCredentials();
-        }catch (AuthenticationException aue)
+        if(!DatabaseConnection.isFirstEntry())
         {
-            System.out.println(aue.getMessage());
-            System.exit(-69);
+            System.out.print("Enter a username: ");
+            String uname = sc.next();
+            System.out.print("Enter a password: ");
+            String pass = sc.next();
+
+            DatabaseConnection.setUsernamePassword(uname,pass);
+            MainMenuNaive.mainMenuDriver();
+        }else{
+            System.out.print("username: ");
+            String uname = sc.nextLine();
+            System.out.print("password: ");
+            String pwd = sc.nextLine();
+
+            Authenticator authenticator = new Authenticator(uname, pwd);
+
+            try{
+                authenticator.CheckCredentials();
+            }catch (AuthenticationException aue)
+            {
+                System.out.println(aue.getMessage());
+                System.exit(-69);
+            }
+
         }
     }
 }
